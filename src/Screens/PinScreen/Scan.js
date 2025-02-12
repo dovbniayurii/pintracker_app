@@ -17,20 +17,20 @@ export default function OnboardingScreen({navigation}) {
       <StatusBar hidden={true} />
 
       <ImageBackground
-        source={require('../../assets/images/sky.png')} // Replace with your actual sky image path
+        source={require('../../assets/images/sky.png')} 
         style={styles.topHalf}
         resizeMode="cover">
         <View style={styles.scanContainer}>
           <Image
-            source={require('../../assets/images/scan.png')} // Replace with your actual scan image path
+            source={require('../../assets/images/scan.png')} 
             style={styles.scanImage}
             resizeMode="contain"
           />
         </View>
 
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.6)', 'black']} // Spread black color upwards
-          locations={[0, 0.4, 0.7, 1]} // Control the spread of the gradient
+          colors={['transparent', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.6)', 'black']} 
+          locations={[0, 0.4, 0.7, 1]} 
           style={styles.gradientOverlay}
         />
       </ImageBackground>
@@ -54,7 +54,7 @@ export default function OnboardingScreen({navigation}) {
           style={styles.myCollectionButton}
           onPress={() => navigation.navigate('MyCollectionScreen')}>
           <Image
-            source={require('../../assets/images/mycollection.png')} // Replace with your actual icon path
+            source={require('../../assets/images/mycollection.png')} 
             style={styles.myCollectionIcon}
             resizeMode="contain"
           />
@@ -72,48 +72,48 @@ const styles = StyleSheet.create({
   topHalf: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center', // Centers scan image
+    justifyContent: 'center', 
     alignItems: 'center',
   },
   scanContainer: {
     position: 'absolute',
-    top: 30, // Adjust this value to move the scan image up or down
+    top: 30, 
   },
   scanImage: {
-    width: 230, // Increased size
-    height: 355, // Increased size
+    width: 230, 
+    height: 355, 
     marginTop: 50,
   },
   gradientOverlay: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: '60%', // Adjust the height to control how far the black spreads
+    height: '60%', 
   },
   bottomHalf: {
-    flex: 0.7, // Keep the same height for the bottom half
+    flex: 0.7, 
     backgroundColor: 'black',
-    justifyContent: 'space-between', // Push content to top and bottom
-    alignItems: 'center', // Centers content horizontally
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
   },
   topContent: {
-    alignItems: 'center', // Centers text and button horizontally
+    alignItems: 'center', 
   },
   textContainer: {
     alignItems: 'center',
-    marginTop: -20, // Move text up using negative margin
+    marginTop: -20, 
   },
   text: {
-    color: 'white', // Set text color to white
-    fontSize: 35, // Set font size
-    fontWeight: '500', // Set font weight
+    color: 'white', 
+    fontSize: 35, 
+    fontWeight: '500', 
     textAlign: 'center',
   },
   button: {
-    marginTop: 30, // Move button up using negative margin
+    marginTop: 30, 
     width: 330,
     height: 48,
-    backgroundColor: '#3E55C6', // Button color
+    backgroundColor: '#3E55C6', 
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 30,
@@ -126,18 +126,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   myCollectionButton: {
-    flexDirection: 'row', // Align icon and text horizontally
-    alignItems: 'center', // Center items vertically
-    marginBottom: 20, // Add space from the bottom
+    flexDirection: 'row',
+    alignItems: 'center', 
+    marginBottom: 20, 
   },
   myCollectionIcon: {
-    width: 31, // Adjust icon size
-    height: 32, // Adjust icon size
-    marginRight: 10, // Add space between icon and text
+    width: 31, 
+    height: 32, 
+    marginRight: 10, 
   },
   myCollectionText: {
-    color: 'white', // Set text color to white
-    fontSize: 21, // Set font size
-    fontWeight: '500', // Set font weight
+    color: 'white',
+    fontSize: 21, 
+    fontWeight: '500', 
   },
 });

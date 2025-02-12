@@ -2,26 +2,26 @@ import React from 'react';
 import { StyleSheet, StatusBar, SafeAreaView, ImageBackground, View, Image, Text, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-export default function OnboardingScreen({ navigation }) {  // ✅ Receive navigation prop
+export default function OnboardingScreen({ navigation }) {  
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar hidden={true} />
 
       <ImageBackground
-        source={require('../../assets/images/sky.png')} // Replace with your actual sky image path
+        source={require('../../assets/images/sky.png')} 
         style={styles.topHalf}
         resizeMode="cover"
       >
         <View style={styles.scanContainer}>
           <Image
-            source={require('../../assets/images/scan.png')} // Replace with your actual scan image path
+            source={require('../../assets/images/scan.png')} 
             style={styles.scanImage}
             resizeMode="contain"
           />
         </View>
 
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.7)', 'black']} // Increased shadow intensity
+          colors={['transparent', 'rgba(0,0,0,0.7)', 'black']} 
           style={styles.shadowOverlay}
         />
       </ImageBackground>
@@ -54,51 +54,51 @@ const styles = StyleSheet.create({
   topHalf: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center', // Centers scan image
+    justifyContent: 'center', 
     alignItems: 'center',
   },
   scanContainer: {
     position: 'absolute',
-    top: 30, // Adjust this value to move the scan image up or down
+    top: 30, 
   },
   scanImage: {
-    width: 250, // Increased size
-    height: 250, // Increased size
+    width: 250, 
+    height: 250, 
     marginTop: 50,
   },
   shadowOverlay: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: 200, // Increased height for smoother blending
+    height: 200, 
   },
   bottomHalf: {
-    flex: 1, // Takes up remaining space
+    flex: 1,
     backgroundColor: 'black',
-    justifyContent: 'center', // Centers text vertically
-    alignItems: 'center', // Centers text horizontally
-    paddingBottom: 50, // Adds space from the bottom
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    paddingBottom: 50, 
   },
   textContainer: {
     alignItems: 'center',
   },
   text: {
-    color: 'white', // Set text color to white
-    fontSize: 34, // Set font size
-    fontWeight: 'bold', // Set font weight
+    color: 'white', 
+    fontSize: 34, 
+    fontWeight: 'bold', 
     textAlign: 'center',
   },
   subText: {
-    color: 'white', // Set text color to white
-    fontSize: 23, // Set font size
-    marginTop: 10, // Add margin to separate from the main text
+    color: 'white', 
+    fontSize: 23, 
+    marginTop: 10, 
     textAlign: 'center',
   },
   button: {
     marginTop: 30,
     width:330,
     height:48,
-    backgroundColor: '#3E55C6', // Bright yellow to stand out
+    backgroundColor: '#3E55C6', 
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 30,

@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   scanContainer: {
     position: 'absolute',
-    top: 30, // Adjust this value to move the scan image up or down
+    top: 30, 
   },
   signupText: {
     color: 'white',
@@ -162,15 +162,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   scanImage: {
-    width: 230, // Increased size
-    height: 355, // Increased size
+    width: 230, 
+    height: 355, 
     marginTop: 50,
   },
   gradientOverlay: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: '60%', // Adjust the height to control how far the black spreads
+    height: '60%', 
   },
   logo: {
     width: '100%',
