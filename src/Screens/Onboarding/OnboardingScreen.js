@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   scanContainer: {
     position: 'absolute',
-    top: 30,
+    // top: 30,
   },
   scanImage: {
     width: 220,
@@ -88,22 +88,22 @@ const styles = StyleSheet.create({
   splashLogo: {
     height: 90,
     width: 280,
-    resizeMode: "cover",
+    resizeMode: "center",
     alignSelf: 'center',
     position: 'absolute',
-    top: '59%', // Adjusted position to account for new proportions
-    zIndex: 1,
+    top: '53%', // Adjusted position to account for new proportions
+    // zIndex: 1,
   },
   bottomHalf: {
     flex: 0.8, // Reduced the flex ratio to make bottom section smaller
     backgroundColor: 'black',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 20, // Reduced padding
+    paddingVertical: 10, // Adjust padding to bring content up
   },
   textContainer: {
     alignItems: 'center',
-    marginTop: 0, // Reduced top margin
+    // marginBottom: 20, // Push text higher
   },
   subText: {
     color: 'white',
@@ -120,6 +120,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 30,
     alignContent: "center",
+    position: "absolute", // Absolute positioning to control placement
+    bottom: 110, // Adj
+
   },
   buttonText: {
     fontSize: 22,
