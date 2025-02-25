@@ -8,7 +8,7 @@ const MyBoards = () => {
       style={styles.background}
     >
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>My Collection</Text>
+        <Text style={styles.title}>My Collectionn</Text>
 
         {/* My Collection Section
         <Text style={styles.sectionTitle}>My Collection</Text>
