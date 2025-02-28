@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
-import { 
-  StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, 
-  KeyboardAvoidingView, ScrollView, Platform, TouchableWithoutFeedback, Keyboard
+/* eslint-disable react-native/no-inline-styles */
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Alert,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import LinearGradient from 'react-native-linear-gradient'; 
-import { useNavigation } from '@react-navigation/native';
+import {Icon} from 'react-native-paper';
+import LinearGradient from 'react-native-linear-gradient';
+import {useNavigation} from '@react-navigation/native';
 
 export default function SignupScreen() {
   const navigation = useNavigation();
@@ -17,34 +28,95 @@ export default function SignupScreen() {
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
   const [focusedInput, setFocusedInput] = useState(null);
 
+  const handleSubmit = async () => {
+    console.log(email, password, confirmPassword);
+
+    // Basic client-side validation
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill out all fields.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+
+    try {
+      // Make a POST request to your Django signup endpoint
+      const response = await fetch('http://10.0.2.2:8000/api/users/signup/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          useremail: email,
+          password: password,
+          confirm_password: confirmPassword,
+          phone_number: '00880009',
+        }),
+      });
+
+      if (!response.ok) {
+        // If the response has an error status, extract and display the error
+        const errorData = await response.json();
+        console.log(errorData);
+
+        Alert.alert('Sign Up Error', errorData.detail || 'An error occurred.');
+        return;
+      }
+
+      // If the sign-up is successful, parse the response if needed
+      const data = await response.json();
+
+      // Optionally, display a success message
+      Alert.alert('Success', 'Your account has been created successfully!');
+
+      // Navigate to the login screen (or wherever you want)
+      navigation.navigate('LoginScreen');
+    } catch (error) {
+      // Catch network or other unexpected errors
+      Alert.alert('Sign Up Error', error.message);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ImageBackground 
-        source={require('../../assets/images/signupsky.png')} 
+      <ImageBackground
+        source={require('../../assets/images/signupsky.png')}
         style={styles.background}
-        resizeMode="cover"
-      >
+        resizeMode="cover">
         <LinearGradient
           colors={['transparent', 'rgba(0, 0, 0, 0.7)']}
           style={styles.shadowOverlay}
         />
 
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-          style={styles.overlay}
-        >
-          <ScrollView 
-            contentContainerStyle={styles.scrollContainer} 
-            keyboardShouldPersistTaps="handled"
-          >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.overlay}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled">
             <Text style={styles.title}>Sign Up for Free</Text>
 
             {/* Email Input */}
             <View style={styles.inputWrapper}>
               <Text style={styles.label}>Email Address</Text>
-              <View style={[styles.inputContainer, { borderColor: focusedInput === 'email' ? '#3E55C6' : 'gray', borderWidth: 1 }]}>
-                <Icon source="email-outline" size={20} color="grey" style={styles.icon} />
-                <TextInput 
+              <View
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor: focusedInput === 'email' ? '#3E55C6' : 'gray',
+                    borderWidth: 1,
+                  },
+                ]}>
+                <Icon
+                  source="email-outline"
+                  size={20}
+                  color="grey"
+                  style={styles.icon}
+                />
+                <TextInput
                   style={styles.input}
                   placeholder="Enter your email"
                   placeholderTextColor="gray"
@@ -60,9 +132,22 @@ export default function SignupScreen() {
             {/* Password Input */}
             <View style={styles.inputWrapper}>
               <Text style={styles.label}>Password</Text>
-              <View style={[styles.inputContainer, { borderColor: focusedInput === 'password' ? '#3E55C6' : 'gray', borderWidth: 1 }]}>
-                <Icon source="lock-outline" size={20} color="grey" style={styles.icon} />
-                <TextInput 
+              <View
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor:
+                      focusedInput === 'password' ? '#3E55C6' : 'gray',
+                    borderWidth: 1,
+                  },
+                ]}>
+                <Icon
+                  source="lock-outline"
+                  size={20}
+                  color="grey"
+                  style={styles.icon}
+                />
+                <TextInput
                   style={styles.input}
                   placeholder="Enter your password"
                   placeholderTextColor="gray"
@@ -72,8 +157,13 @@ export default function SignupScreen() {
                   onFocus={() => setFocusedInput('password')}
                   onBlur={() => setFocusedInput(null)}
                 />
-                <TouchableOpacity onPress={() => setSecurePassword(!securePassword)}>
-                  <Icon source={securePassword ? "eye-off-outline" : "eye-outline"} size={20} color="gray" />
+                <TouchableOpacity
+                  onPress={() => setSecurePassword(!securePassword)}>
+                  <Icon
+                    source={securePassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color="gray"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -81,9 +171,22 @@ export default function SignupScreen() {
             {/* Confirm Password Input */}
             <View style={styles.inputWrapper}>
               <Text style={styles.label}>Password Confirmation</Text>
-              <View style={[styles.inputContainer, { borderColor: focusedInput === 'confirmPassword' ? '#3E55C6' : 'gray', borderWidth: 1 }]}>
-                <Icon source="lock-outline" size={20} color="grey" style={styles.icon} />
-                <TextInput 
+              <View
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor:
+                      focusedInput === 'confirmPassword' ? '#3E55C6' : 'gray',
+                    borderWidth: 1,
+                  },
+                ]}>
+                <Icon
+                  source="lock-outline"
+                  size={20}
+                  color="grey"
+                  style={styles.icon}
+                />
+                <TextInput
                   style={styles.input}
                   placeholder="Confirm your password"
                   placeholderTextColor="gray"
@@ -93,23 +196,36 @@ export default function SignupScreen() {
                   onFocus={() => setFocusedInput('confirmPassword')}
                   onBlur={() => setFocusedInput(null)}
                 />
-                <TouchableOpacity onPress={() => setSecureConfirmPassword(!secureConfirmPassword)}>
-                  <Icon source={secureConfirmPassword ? "eye-off-outline" : "eye-outline"} size={20} color="gray" />
+                <TouchableOpacity
+                  onPress={() =>
+                    setSecureConfirmPassword(!secureConfirmPassword)
+                  }>
+                  <Icon
+                    source={
+                      secureConfirmPassword ? 'eye-off-outline' : 'eye-outline'
+                    }
+                    size={20}
+                    color="gray"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
 
             {/* Sign Up Button */}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.signupButton}
-              onPress={() => navigation.navigate("LoginScreen")}
-            >
+              onPress={handleSubmit}>
               <Text style={styles.signupText}>Sign Up</Text>
             </TouchableOpacity>
 
             {/* Sign In Link */}
             <Text style={styles.signInText}>
-              Already have an account? <Text style={styles.signInLink}>Sign In</Text>
+              Already have an account?{' '}
+              <Text
+                onPress={() => navigation.navigate('LoginScreen')}
+                style={styles.signInLink}>
+                Sign In
+              </Text>
             </Text>
 
             {/* OR Divider */}
@@ -131,7 +247,6 @@ export default function SignupScreen() {
                 <Icon source="facebook" size={24} color="white" />
               </TouchableOpacity>
             </View>
-
           </ScrollView>
         </KeyboardAvoidingView>
       </ImageBackground>

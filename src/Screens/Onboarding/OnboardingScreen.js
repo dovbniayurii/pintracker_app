@@ -7,20 +7,19 @@ import {
   View,
   Image,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-export default function OnboardingScreen({ navigation }) {
+export default function OnboardingScreen({navigation}) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar hidden={true} />
-      
+
       <ImageBackground
         source={require('../../assets/images/sky.png')}
         style={styles.topHalf}
-        resizeMode="cover"
-      >
+        resizeMode="cover">
         <View style={styles.scanContainer}>
           <Image
             source={require('../../assets/images/scan.png')}
@@ -35,8 +34,8 @@ export default function OnboardingScreen({ navigation }) {
         />
       </ImageBackground>
 
-      <Image 
-        source={require("./../../assets/images/splash.png")}
+      <Image
+        source={require('./../../assets/images/splash.png')}
         style={styles.splashLogo}
       />
 
@@ -49,9 +48,9 @@ export default function OnboardingScreen({ navigation }) {
           </Text>
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("SignupScreen")}
+          onPress={() => navigation.navigate('SignupScreen')} // This is correct ✅
         >
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
@@ -88,7 +87,7 @@ const styles = StyleSheet.create({
   splashLogo: {
     height: 90,
     width: 280,
-    resizeMode: "center",
+    resizeMode: 'center',
     alignSelf: 'center',
     position: 'absolute',
     top: '53%', // Adjusted position to account for new proportions
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
   subText: {
     color: 'white',
     fontSize: 22,
-    fontWeight: "400",
+    fontWeight: '400',
     marginTop: 0,
     textAlign: 'center',
   },
@@ -119,10 +118,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 30,
-    alignContent: "center",
-    position: "absolute", // Absolute positioning to control placement
+    alignContent: 'center',
+    position: 'absolute', // Absolute positioning to control placement
     bottom: 110, // Adj
-
   },
   buttonText: {
     fontSize: 22,

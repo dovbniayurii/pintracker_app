@@ -1,10 +1,12 @@
-import React from "react";
-import { StyleSheet, View, ImageBackground, Image, Text, TouchableOpacity } from "react-native";
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { StyleSheet, View, ImageBackground, Image, Text, TouchableOpacity } from 'react-native';
 
 const PinCollectionScreen = () => {
+    const navigation = useNavigation();
   return (
     <ImageBackground
-      source={require("../../assets/images/realsky.png")}
+      source={require('../../assets/images/realsky.png')}
       style={styles.background}
     >
       <View style={styles.container}>
@@ -14,7 +16,7 @@ const PinCollectionScreen = () => {
           <View style={styles.pinBox}>
             <View style={styles.glowContainer}>
               <Image
-                source={require("../../assets/images/desney.png")}
+                source={require('../../assets/images/desney.png')}
                 style={styles.pinImage}
                 resizeMode="contain"
               />
@@ -29,13 +31,13 @@ const PinCollectionScreen = () => {
       {/* Footer */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton}>
-          <Image source={require("../../assets/images/scanner.png")} style={styles.footerIcon} />
+          <Image source={require('../../assets/images/scanner.png')} style={styles.footerIcon} />
           <Text style={styles.footerText}>Scan</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.footerButton}>
-          <Image source={require("../../assets/images/mycollection.png")} style={styles.footerIcon} />
-          <Text style={[styles.footerText, { color: "grey" }]}>My Collection</Text>
+          <Image source={require('../../assets/images/mycollection.png')} style={styles.footerIcon} />
+          <Text onPress={navigation.navigate('Boards')} style={[styles.footerText, { color: 'grey' }]}>My Collection</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -45,36 +47,36 @@ const PinCollectionScreen = () => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
-    alignItems: "center",
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
   },
   title: {
     fontSize: 22,
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
     marginBottom: 20,
   },
   pinContainer: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   pinTitle: {
     fontSize: 18,
-    color: "white",
+    color: 'white',
     marginBottom: 10,
   },
   glowContainer: {
     width: 328,
     height: 488,
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     shadowOffset: { width: 0, height: 15 },
     shadowOpacity: 0.4,
     shadowRadius: 50, // More blur for softness
@@ -87,40 +89,40 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   shadowEffect: {
-    width: "100%",
+    width: '100%',
     height: 140, // Increase this to make it spread more
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    shadowColor: "#000",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: -20 }, // Negative value for bottom effect
     shadowOpacity: 1,
-   
+
   },
   footer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   footerButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 10,
   },
   footerIcon: {
     width: 24,
     height: 24,
-    tintColor: "#fff",
+    tintColor: '#fff',
     marginRight: 8,
   },
   footerText: {
-    color: "white",
+    color: 'white',
     fontSize: 21,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });
 
