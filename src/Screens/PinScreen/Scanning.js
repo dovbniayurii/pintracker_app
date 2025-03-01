@@ -64,20 +64,6 @@ const DisneyPinScanner = () => {
     }
   };
 
-  // Helper function to convert base64 string to Blob using react-native-base64
-  const base64ToBlob = (base64String, mimeType) => {
-    const byteCharacters = base64.decode(base64String); // Decode base64 using react-native-base64
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-      const slice = byteCharacters.slice(offset, offset + 1024);
-      byteArrays.push(
-        new Uint8Array(slice.split('').map(char => char.charCodeAt(0))),
-      );
-    }
-
-    return new Blob(byteArrays, {type: mimeType});
-  };
 
   const uploadImage = async (imageUri) => {
     try {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -15,9 +15,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from './AuthContext';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
+  const { login } = useContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,6 +41,7 @@ export default function LoginScreen() {
       const {access, refresh} = response.data;
       await AsyncStorage.setItem('accessToken', access);
       await AsyncStorage.setItem('refreshToken', refresh);
+      await login(); // Update authentication state
     } catch (err) {
       console.log(err);
 

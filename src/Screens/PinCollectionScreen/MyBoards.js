@@ -122,7 +122,8 @@ export default function MyBoards() {
         style={styles.bottomGradient}
       />
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton}
+        onPress={() => navigation.navigate('Scanning')}>
           <Image
             source={require('../../assets/images/scanner.png')}
             style={styles.footerIcon}
@@ -192,6 +193,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 12,
     padding: 12,
+    width:380,
   },
   sectionHeader: {
     flexDirection: 'row',

@@ -30,7 +30,8 @@ const PinCollectionScreen = () => {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton}
+        onPress={() => navigation.navigate('Scanning')}>
           <Image source={require('../../assets/images/scanner.png')} style={styles.footerIcon} />
           <Text style={styles.footerText}>Scan</Text>
         </TouchableOpacity>

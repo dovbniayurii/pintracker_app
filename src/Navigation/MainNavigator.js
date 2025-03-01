@@ -50,7 +50,7 @@ const MainNavigator = () => {
     );
   }
 
-  return <AuthStack />;
+  return isAuthenticated ? <AppStack /> : <AuthStack />;
 };
 
 export default MainNavigator;

@@ -91,7 +91,8 @@ export default function BoardDetails() {
         style={styles.bottomGradient}
       />
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton}
+        onPress={() => navigation.navigate('Scanning')}>
           <Image
             source={require('../../assets/images/scanner.png')}
             style={styles.footerIcon}
