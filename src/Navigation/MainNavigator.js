@@ -9,11 +9,13 @@ import OtpCode from '../Screens/Auth/OtpCode';
 import Scan from '../Screens/PinScreen/Scan';
 import Scanning from '../Screens/PinScreen/Scanning';
 import PinAdded from '../Screens/PinCollectionScreen/PinAdded';
+
 import MyBoards from '../Screens/PinCollectionScreen/MyBoards';
 import Boards from '../Screens/PinCollectionScreen/Boards';
 import BoardDetails from '../Screens/PinCollectionScreen/Details';
 import { AuthContext } from '../Screens/Auth/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +43,7 @@ const AppStack = () => (
 
 const MainNavigator = () => {
   const { isAuthenticated, loading } = useContext(AuthContext);
+
 
   if (loading) {
     return (

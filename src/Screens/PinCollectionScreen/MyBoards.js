@@ -1,3 +1,4 @@
+
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
@@ -141,15 +142,18 @@ export default function MyBoards() {
           <Text style={[styles.footerText, {color: 'grey'}]}>
             My Collection
           </Text>
+
         </TouchableOpacity>
       </View>
     </ImageBackground>
   );
+
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
+
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
@@ -273,3 +277,4 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(62, 85, 198, 1)',
   },
 });
+
