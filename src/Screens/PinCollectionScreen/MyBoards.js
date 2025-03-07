@@ -1,135 +1,280 @@
-import React from "react";
-import { StyleSheet, View, ImageBackground, Image, Text, TouchableOpacity, ScrollView } from "react-native";
 
-const MyBoards = () => {
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import axiosClient from '../../../apiClient';
+
+// Import images statically
+const myCollectionIcon = require('../../assets/images/mycollection.png');
+
+const GameGrid = ({title, items, icons, conponents, navigate}) => (
+  <View style={styles.section}>
+    <View style={styles.sectionHeader}>
+      <Image source={icons} style={{width: 20, height: 20}} />
+      <Text style={styles.sectionTitle}>{title}</Text>
+    </View>
+    <View style={styles.grid}>
+      {items.map((item, index) => (
+        <TouchableOpacity
+          onPress={() => navigate(item.id)}
+          key={index}
+          style={styles.gridItem}>
+          <View style={styles.gameIcon}>
+            {/* <View style={styles.placeholderIcon} /> Placeholder for game icons */}
+            <View style={styles.placeholderIcon}>
+              {item.pin.image_url && (
+                <Image
+                  source={{uri: item.pin.image_url}}
+                  style={{width: 200, height: 200}} // Ensure width & height are set
+                  resizeMode="cover"
+                />
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      ))}
+    </View>
+    {conponents}
+  </View>
+);
+
+export default function MyBoards() {
+  const navigation = useNavigation();
+  const dummyItems = Array(20).fill({});
+  const itemsPerPage = 16; // Number of items to show per page
+  const totalPages = Math.ceil(dummyItems.length / itemsPerPage);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pins, setPin] = useState([]);
+  useEffect(() => {
+    pinData();
+  }, []);
+  const pinData = async () => {
+    try {
+      const response = await axiosClient.get('/api/pins/user-collection/');
+      //console.log(response.data);
+      setPin(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const getPaginatedItems = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return pins.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const handlePageChange = page => {
+    setCurrentPage(page);
+  };
+
+  const renderPaginationDots = () => {
+    const dots = [];
+    for (let i = 1; i <= totalPages; i++) {
+      dots.push(
+        <TouchableOpacity
+          key={i}
+          style={[styles.dot, currentPage === i && styles.activeDot]}
+          onPress={() => handlePageChange(i)}
+        />,
+      );
+    }
+    return dots;
+  };
+
   return (
     <ImageBackground
-      source={require("../../assets/images/sky.png")}
-      style={styles.background}
-    >
-      <ScrollView style={styles.container}>
-        <Text style={styles.title}>My Collectionn</Text>
+      source={require('../../assets/images/realsky.png')}
+      style={styles.background}>
+      <LinearGradient
+        colors={['#000000', 'rgba(0, 28, 92, 0)']}
+        style={styles.topGradient}
+      />
+      <View style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <Text style={styles.title}>My Collection</Text>
 
-        {/* My Collection Section
-        <Text style={styles.sectionTitle}>My Collection</Text>
-        <View style={styles.imageGrid}>
-          {[1, 2, 3, 4].map((item) => (
-            <View key={item} style={[styles.imageContainer, styles.borderOpacity]}>
-              <Image source={require("../../assets/images/image.png")} style={styles.image} />
-              <Text style={styles.imageText}>Item {item}</Text>
-            </View>
-          ))}
-        </View> */}
+          <ScrollView style={styles.scrollView}>
+            <GameGrid
+              title="My Board"
+              items={getPaginatedItems()}
+              icons={myCollectionIcon}
+              conponents={
+                <View style={styles.pagination}>{renderPaginationDots()}</View>
+              }
+              navigate={id => navigation.navigate('BoardDetails', {itemId: id})}
+            />
+          </ScrollView>
+        </SafeAreaView>
+        {/* Pagination Dots */}
+      </View>
 
-        {/* My Board Section */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>My Board</Text>
-          <TouchableOpacity>
-            <Image source={require("../../assets/images/dots.png")} style={styles.dotsIcon} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.imageGrid}>
-          {Array.from({ length: 20 }, (_, index) => (
-            <View key={index} style={[styles.imageContainer, styles.borderOpacity]}>
-              <Image source={require("../../assets/images/image.png")} style={styles.image} />
-              <Text style={styles.imageText}>Item {index + 1}</Text>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-
-      {/* Footer */}
-      <View style={[styles.footer, styles.borderOpacity]}>
-        <TouchableOpacity style={styles.footerButton}>
-          <Image source={require("../../assets/images/image.png")} style={styles.footerImage} />
+      <LinearGradient
+        colors={['rgba(0, 28, 92, 0)', '#000000']}
+        style={styles.bottomGradient}
+      />
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.footerButton}
+        onPress={() => navigation.navigate('Scanning')}>
+          <Image
+            source={require('../../assets/images/scanner.png')}
+            style={styles.footerIcon}
+          />
           <Text style={styles.footerText}>Scan</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Image source={require("../../assets/images/image.png")} style={styles.footerImage} />
-          <Text style={styles.footerText}>My Collection</Text>
+
+        <TouchableOpacity
+          style={styles.footerButton}
+          onPress={() => navigation.navigate('Boards')}>
+          <Image
+            source={require('../../assets/images/mycollection.png')}
+            style={styles.footerIcon}
+          />
+          <Text style={[styles.footerText, {color: 'grey'}]}>
+            My Collection
+          </Text>
+
         </TouchableOpacity>
       </View>
     </ImageBackground>
   );
-};
+
+}
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: "cover",
+
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     flex: 1,
-    paddingTop: 50,
+    marginTop: '30%',
+  },
+  topGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '30%', // Adjust the height of the gradient overlay
+  },
+  bottomGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '30%', // Adjust the height of the gradient overlay
+  },
+  safeArea: {
+    flex: 1,
   },
   title: {
     fontSize: 24,
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 16,
+    // height: '60%',
+  },
+  section: {
+    height: 500,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     marginBottom: 20,
+    borderRadius: 12,
+    padding: 12,
+    width:380,
   },
   sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 20,
-    color: "white",
-    fontWeight: "bold",
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
-  dotsIcon: {
-    width: 24,
-    height: 24,
-    tintColor: "white",
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
-  imageGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
+  gridItem: {
+    width: '23%',
+    aspectRatio: 1,
+    marginBottom: 8,
   },
-  imageContainer: {
-    alignItems: "center",
-    marginVertical: 10,
-    width: "23%", // Adjust based on your design needs
+  gameIcon: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+    overflow: 'hidden',
   },
-  image: {
-    width: 60,
-    height: 60,
-  },
-  imageText: {
-    color: "white",
-    fontSize: 14,
-    marginTop: 5,
+  placeholderIcon: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 8,
   },
   footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: 'transparent',
   },
   footerButton: {
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
   },
-  footerImage: {
+  footerIcon: {
     width: 24,
     height: 24,
+    tintColor: '#fff',
+    marginRight: 8,
   },
   footerText: {
-    color: "white",
-    fontSize: 14,
-    marginTop: 5,
+    color: 'white',
+    fontSize: 21,
+    fontWeight: '500',
   },
-  borderOpacity: {
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.5)",
-    borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: 'rgba(62, 85, 198, 1)',
   },
 });
 
-export default MyBoards;

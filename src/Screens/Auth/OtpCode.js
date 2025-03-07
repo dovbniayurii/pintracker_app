@@ -1,20 +1,27 @@
 import React, { useState, useRef } from 'react';
-import { 
-  StyleSheet, View, ImageBackground, TextInput, TouchableOpacity 
+import {
+  StyleSheet, View, ImageBackground, TextInput, TouchableOpacity,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Text } from 'react-native-paper';
+import axios from 'axios';
 
 export default function OtpScreen() {
   const navigation = useNavigation();
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputRefs = useRef([]);
+  const route = useRoute(); // Get the route object
+
+  // Extract both email and phoneNumber from route params (if available)
+  const { email, phoneNumber } = route.params || {};
+  console.log('Email:', email, 'Phone:', phoneNumber);
 
   const handleOtpChange = (text, index) => {
     let newOtp = [...otp];
 
-    // Allow only one character
+    // Allow only one character per input
     if (text.length > 1) return;
 
     newOtp[index] = text;
@@ -32,20 +39,35 @@ export default function OtpScreen() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const otpCode = otp.join('');
-    console.log("Entered OTP:", otpCode);
-
     if (otpCode.length === 4) {
-      navigation.navigate("Scan"); // Proceed to the next screen
+      try {
+        // Build request body with OTP and whichever identifier is provided.
+        const requestData = { otp: otpCode };
+        if (email) {
+          requestData.email = email;
+        }
+        if (phoneNumber) {
+          requestData.phone_number = phoneNumber;
+        }
+        
+        const response = await axios.post('http://10.0.2.2:8000/api/users/verify-otp/', requestData);
+        console.log(response);
+        const token = response.data.access;
+        navigation.navigate('ResetPassword', { token });
+      } catch (err) {
+        console.log(err);
+        Alert.alert('Verification failed', 'Invalid OTP or expired code.');
+      }
     } else {
-      alert("Please enter a 4-digit OTP");
+      Alert.alert('Invalid OTP', 'Please enter a valid 4-digit OTP.');
     }
   };
 
   return (
-    <ImageBackground 
-      source={require('../../assets/images/signupsky.png')} 
+    <ImageBackground
+      source={require('../../assets/images/signupsky.png')}
       style={styles.background}
       resizeMode="cover"
     >
@@ -56,22 +78,23 @@ export default function OtpScreen() {
 
       <View style={styles.overlayAdjusted}>
         <Text style={styles.title} variant="headlineMedium">OTP Authentication</Text>
-        <Text style={styles.subtitle} variant="bodyMedium">A 4-digit code has been sent to your email</Text>
-        
+        <Text style={styles.subtitle} variant="bodyMedium">
+          A 4-digit code has been sent to your {email ? 'email' : 'phone'}.
+        </Text>
+
         <View style={styles.otpContainer}>
           {otp.map((digit, index) => (
-            <TextInput 
+            <TextInput
               key={index}
-              ref={(el) => inputRefs.current[index] = el}
+              ref={(el) => (inputRefs.current[index] = el)}
               style={styles.otpInput}
-              // placeholder="-"
               placeholderTextColor="gray"
               keyboardType="numeric"
               maxLength={1}
               value={digit}
               onChangeText={(text) => handleOtpChange(text, index)}
               onKeyPress={({ nativeEvent }) => {
-                if (nativeEvent.key === "Backspace") {
+                if (nativeEvent.key === 'Backspace') {
                   handleBackspace(digit, index);
                 }
               }}
@@ -80,7 +103,7 @@ export default function OtpScreen() {
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitText} variant="bodyLarge">Submit</Text> 
+          <Text style={styles.submitText} variant="bodyLarge">Submit</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -102,7 +125,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    // paddingHorizontal: 20,
     paddingTop: 170,
   },
   title: {
@@ -110,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
     fontSize: 30,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   subtitle: {
     fontSize: 16,
@@ -123,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     width: '60%',
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   otpInput: {
     borderBottomWidth: 2,
@@ -146,7 +168,6 @@ const styles = StyleSheet.create({
   submitText: {
     color: 'white',
     fontSize: 21,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });
-

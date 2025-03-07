@@ -17,20 +17,20 @@ export default function OnboardingScreen({navigation}) {
       <StatusBar hidden={true} />
 
       <ImageBackground
-        source={require('../../assets/images/sky.png')} 
+        source={require('../../assets/images/sky.png')}
         style={styles.topHalf}
         resizeMode="cover">
         <View style={styles.scanContainer}>
           <Image
-            source={require('../../assets/images/scan.png')} 
+            source={require('../../assets/images/scan.png')}
             style={styles.scanImage}
             resizeMode="contain"
           />
         </View>
 
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.6)', 'black']} 
-          locations={[0, 0.4, 0.7, 1]} 
+          colors={['transparent', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.6)', 'black']}
+          locations={[0, 0.4, 0.7, 1]}
           style={styles.gradientOverlay}
         />
       </ImageBackground>
@@ -52,9 +52,9 @@ export default function OnboardingScreen({navigation}) {
 
         <TouchableOpacity
           style={styles.myCollectionButton}
-          onPress={() => navigation.navigate('MyCollectionScreen')}>
+          onPress={() => navigation.navigate('Boards')}>
           <Image
-            source={require('../../assets/images/mycollection.png')} 
+            source={require('../../assets/images/mycollection.png')}
             style={styles.myCollectionIcon}
             resizeMode="contain"
           />
@@ -72,48 +72,48 @@ const styles = StyleSheet.create({
   topHalf: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center',
   },
   scanContainer: {
     position: 'absolute',
-    top: 30, 
+    top: 30,
   },
   scanImage: {
-    width: 230, 
-    height: 355, 
+    width: 230,
+    height: 355,
     marginTop: 50,
   },
   gradientOverlay: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: '60%', 
+    height: '60%',
   },
   bottomHalf: {
-    flex: 0.7, 
+    flex: 0.7,
     backgroundColor: 'black',
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   topContent: {
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   textContainer: {
     alignItems: 'center',
-    marginTop: -20, 
+    marginTop: -20,
   },
   text: {
-    color: 'white', 
-    fontSize: 35, 
-    fontWeight: '500', 
+    color: 'white',
+    fontSize: 35,
+    fontWeight: '500',
     textAlign: 'center',
   },
   button: {
-    marginTop: 30, 
+    marginTop: 30,
     width: 330,
     height: 48,
-    backgroundColor: '#3E55C6', 
+    backgroundColor: '#3E55C6',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 30,
@@ -127,17 +127,17 @@ const styles = StyleSheet.create({
   },
   myCollectionButton: {
     flexDirection: 'row',
-    alignItems: 'center', 
-    marginBottom: 20, 
+    alignItems: 'center',
+    marginBottom: 20,
   },
   myCollectionIcon: {
-    width: 31, 
-    height: 32, 
-    marginRight: 10, 
+    width: 31,
+    height: 32,
+    marginRight: 10,
   },
   myCollectionText: {
     color: 'white',
-    fontSize: 21, 
-    fontWeight: '500', 
+    fontSize: 21,
+    fontWeight: '500',
   },
 });

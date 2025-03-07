@@ -1,22 +1,62 @@
-import React, { useState } from 'react';
-import { 
-  StyleSheet, View, ImageBackground, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView 
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  ImageBackground,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
 } from 'react-native';
-import { Icon, Text } from 'react-native-paper'; // Import Text from react-native-paper
+import {Icon, Text} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 
 export default function ForgotPasswordScreen() {
   const navigation = useNavigation();
+  // State for email and phone number
   const [email, setEmail] = useState('');
-  const [focusedInput, setFocusedInput] = useState(null); // Track focused input
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [focusedInput, setFocusedInput] = useState(null);
+
+  const handleSubmit = async () => {
+    // Require that at least one of email or phone number is provided.
+    if (!email && !phoneNumber) {
+      Alert.alert('Error', 'Please enter your email or phone number.');
+      return;
+    }
+
+    try {
+      // Build request body based on provided fields
+      const requestBody = {};
+      if (email) {
+        requestBody.email = email;
+      }
+      if (phoneNumber) {
+        requestBody.phone_number = phoneNumber;
+      }
+
+      const response = await axios.post(
+        'http://10.0.2.2:8000/api/users/forgot-password/',
+        requestBody,
+      );
+
+      // Pass the provided email or phone number to the OTP screen.
+      navigation.navigate('OtpCode', {email, phoneNumber});
+    } catch (err) {
+      console.log(err);
+      Alert.alert('Error', err.message || 'Something went wrong.');
+    }
+  };
 
   return (
-    <ImageBackground 
-      source={require('../../assets/images/signupsky.png')} 
+    <ImageBackground
+      source={require('../../assets/images/signupsky.png')}
       style={styles.background}
-      resizeMode="cover"
-    >
+      resizeMode="cover">
       <LinearGradient
         colors={['transparent', 'rgba(0, 0, 0, 0.7)']}
         style={styles.shadowOverlay}
@@ -25,45 +65,83 @@ export default function ForgotPasswordScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Adjust this value as needed
-      >
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled" // Ensures taps outside the keyboard dismiss it
-        >
+          keyboardShouldPersistTaps="handled">
           <View style={styles.overlay}>
             {/* Title & Subtitle */}
-            <View style={styles.headerMovedUp}> 
-              <Text style={styles.title} variant="headlineMedium">Forgot Password?</Text> 
-              <Text style={styles.subtitle} variant="bodyMedium">Enter your email to recover your password.</Text> 
+            <View style={styles.headerMovedUp}>
+              <Text style={styles.title} variant="headlineMedium">
+                Forgot Password?
+              </Text>
+              <Text style={styles.subtitle} variant="bodyMedium">
+                Enter your email or phone number to recover your password.
+              </Text>
             </View>
 
             {/* Email Input */}
             <View style={styles.inputWrapper}>
-              <Text style={styles.label} variant="bodyMedium">Email Address</Text> 
-              <View style={[
-                styles.spacedInputContainer, 
-                { borderColor: focusedInput === 'email' ? '#3E55C6' : 'gray' } // Dynamic border color
-              ]}>
-                <Icon source="email-outline" size={20} color="grey" style={styles.icon} /> 
-                <TextInput 
+              <Text style={styles.label} variant="bodyMedium">
+                Email Address
+              </Text>
+              <View
+                style={[
+                  styles.spacedInputContainer,
+                  {borderColor: focusedInput === 'email' ? '#3E55C6' : 'gray'},
+                ]}>
+                <Icon
+                  source="email-outline"
+                  size={20}
+                  color="grey"
+                  style={styles.icon}
+                />
+                <TextInput
                   style={styles.input}
                   placeholder="Enter your email"
                   placeholderTextColor="gray"
                   keyboardType="email-address"
                   value={email}
                   onChangeText={setEmail}
-                  onFocus={() => setFocusedInput('email')} // Set focused input to 'email'
-                  onBlur={() => setFocusedInput(null)} // Reset focused input
+                  onFocus={() => setFocusedInput('email')}
+                  onBlur={() => setFocusedInput(null)}
                 />
               </View>
             </View>
 
-            <TouchableOpacity 
-              style={styles.resetButton}
-              onPress={() => navigation.navigate("ResetPassword")}
-            >
-              <Text style={styles.resetText} variant="bodyLarge">Submit</Text> 
+            {/* Phone Number Input */}
+            <View style={styles.inputWrapper}>
+              <Text style={styles.label} variant="bodyMedium">
+                Phone Number
+              </Text>
+              <View
+                style={[
+                  styles.spacedInputContainer,
+                  {borderColor: focusedInput === 'phone' ? '#3E55C6' : 'gray'},
+                ]}>
+                <Icon
+                  source="phone-outline"
+                  size={20}
+                  color="grey"
+                  style={styles.icon}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your phone number"
+                  placeholderTextColor="gray"
+                  keyboardType="phone-pad"
+                  value={phoneNumber}
+                  onChangeText={setPhoneNumber}
+                  onFocus={() => setFocusedInput('phone')}
+                  onBlur={() => setFocusedInput(null)}
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity style={styles.resetButton} onPress={handleSubmit}>
+              <Text style={styles.resetText} variant="bodyLarge">
+                Submit
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -88,7 +166,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingBottom: 20, // Add padding to ensure content is scrollable
+    paddingBottom: 20,
   },
   overlay: {
     flex: 1,
@@ -97,14 +175,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
   },
-  headerMovedUp: { // Adjusted to move title higher
+  headerMovedUp: {
     width: '100%',
-    marginBottom: 40, // Increased margin to move title higher
+    marginBottom: 40,
     alignItems: 'center',
   },
   title: {
     color: 'white',
-    marginBottom: 10, // Added margin to separate title and subtitle
+    marginBottom: 10,
     textAlign: 'center',
   },
   subtitle: {
@@ -128,7 +206,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 45,
     borderWidth: 1,
-    borderColor: 'gray', // Default border color when not focused
+    borderColor: 'gray',
   },
   icon: {
     marginRight: 10,
@@ -146,17 +224,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10, // Moved up (from 20 to 10)
+    marginTop: 10,
   },
   resetText: {
     color: 'white',
-    fontSize:21,
-    fontWeight:"500",
-
-  },
-  backToLogin: {
-    color: '#3E55C6',
-    fontWeight: 'bold',
-    marginTop: 10,
+    fontSize: 21,
+    fontWeight: '500',
   },
 });
