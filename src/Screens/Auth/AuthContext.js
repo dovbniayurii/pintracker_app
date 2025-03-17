@@ -23,7 +23,10 @@ export const AuthProvider = ({ children }) => {
     };
     checkAuth();
   }, []);
-
+  const login = async () => {
+    const token = await AsyncStorage.getItem('accessToken');
+    setIsAuthenticated(!!token);
+  };
 
   // Logout function
   const logout = async () => {
@@ -37,6 +40,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     isAuthenticated,
     loading,
+    login,
     user,
     logout,
   };

@@ -14,6 +14,8 @@ import Boards from '../Screens/PinCollectionScreen/Boards';
 import BoardDetails from '../Screens/PinCollectionScreen/Details';
 import { AuthContext } from '../Screens/Auth/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
+import VerifyPhoneNumber from '../Screens/Auth/VerifyPhoneNumber';
+import PinIdentified from '../Screens/PinCollectionScreen/PinIdentified';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +27,8 @@ const AuthStack = () => (
     <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
     <Stack.Screen name="ResetPassword" component={ResetPassword} />
     <Stack.Screen name="OtpCode" component={OtpCode} />
+    <Stack.Screen name="VerifyPhoneNumber" component={VerifyPhoneNumber} />
+
   </Stack.Navigator>
 );
 
@@ -32,6 +36,7 @@ const AppStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Scan" component={Scan} />
     <Stack.Screen name="Scanning" component={Scanning} />
+    <Stack.Screen name="PinIdentified" component={PinIdentified} />
     <Stack.Screen name="PinAdded" component={PinAdded} />
     <Stack.Screen name="Boards" component={Boards} />
     <Stack.Screen name="MyBoards" component={MyBoards} />
@@ -50,7 +55,7 @@ const MainNavigator = () => {
     );
   }
 
-  return <AuthStack />;
+  return isAuthenticated ? <AppStack /> : <AuthStack />;
 };
 
 export default MainNavigator;

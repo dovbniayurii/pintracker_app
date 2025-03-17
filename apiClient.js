@@ -1,8 +1,10 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {resetNavigation} from './src/Navigation/NavigationService';
+import {Alert} from 'react-native';
 
 // Your base API URL
-const API_URL = 'http://10.0.2.2:8000';
+const API_URL = 'http://108.181.199.70:7000';
 
 // Create axios client
 const axiosClient = axios.create({
@@ -35,25 +37,36 @@ axiosClient.interceptors.response.use(
       if (refreshToken) {
         try {
           // Attempt to refresh token
-          const response = await axios.post(`${API_URL}/api/users/refreshtoken/`, {
-            refresh: refreshToken,
-          });
+          const response = await axios.post(
+            `${API_URL}/api/users/refreshtoken/`,
+            {
+              refresh: refreshToken,
+            },
+          );
 
           const newAccessToken = response.data.access;
           await AsyncStorage.setItem('accessToken', newAccessToken);
-          
+
           // Update axiosClient headers and retry request
           axiosClient.defaults.headers.common[
             'Authorization'
           ] = `Bearer ${newAccessToken}`;
-          
+
           return axiosClient(originalRequest);
         } catch (refreshError) {
-          console.error('Refresh token expired:', refreshError.response?.data);
+          // In your axiosClient interceptor response error handler
+          Alert.alert('Session Expired', 'Please login again', [
+            {
+              text: 'OK',
+              onPress: async () => {
+                await AsyncStorage.removeItem('accessToken');
+                await AsyncStorage.removeItem('refreshToken');
+                
+              },
+            },
+          ]);
 
-          // **Handle token expiration: Logout user**
-          await AsyncStorage.removeItem('accessToken');
-          await AsyncStorage.removeItem('refreshToken');
+          //console.error('Refresh token expired:', refreshError.response?.data);
 
           // Optionally, navigate to login screen (if using React Navigation)
           // navigation.navigate('Login');
@@ -64,7 +77,7 @@ axiosClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosClient;

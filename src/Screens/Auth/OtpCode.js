@@ -1,12 +1,17 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef} from 'react';
 import {
-  StyleSheet, View, ImageBackground, TextInput, TouchableOpacity,
+  StyleSheet,
+  View,
+  ImageBackground,
+  TextInput,
+  TouchableOpacity,
   Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { Text } from 'react-native-paper';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {Text} from 'react-native-paper';
 import axios from 'axios';
+import axiosPublic from '../../../axiosPublic';
 
 export default function OtpScreen() {
   const navigation = useNavigation();
@@ -15,8 +20,8 @@ export default function OtpScreen() {
   const route = useRoute(); // Get the route object
 
   // Extract both email and phoneNumber from route params (if available)
-  const { email, phoneNumber } = route.params || {};
-  console.log('Email:', email, 'Phone:', phoneNumber);
+  const {email, phoneNumber, type} = route.params || {};
+  console.log('Email:', email, 'Phone:', phoneNumber, type);
 
   const handleOtpChange = (text, index) => {
     let newOtp = [...otp];
@@ -44,18 +49,32 @@ export default function OtpScreen() {
     if (otpCode.length === 4) {
       try {
         // Build request body with OTP and whichever identifier is provided.
-        const requestData = { otp: otpCode };
+        const requestData = {otp: otpCode};
         if (email) {
           requestData.email = email;
         }
         if (phoneNumber) {
           requestData.phone_number = phoneNumber;
         }
-        
-        const response = await axios.post('http://10.0.2.2:8000/api/users/verify-otp/', requestData);
-        console.log(response);
-        const token = response.data.access;
-        navigation.navigate('ResetPassword', { token });
+
+        if (type === 'resat_password') {
+          const response = await axiosPublic.post(
+            '/api/users/verify-otp/',
+            requestData,
+          );
+          console.log(response);
+          const token = response.data.access;
+          navigation.navigate('ResetPassword', {token});
+        }
+        if (type === 'number_verification') {
+          const response = await axiosPublic.put(
+            '/api/users/verify-phone-number/',
+            requestData,
+          );
+
+          // Optionally, display a success message
+          navigation.navigate('LoginScreen');
+        }
       } catch (err) {
         console.log(err);
         Alert.alert('Verification failed', 'Invalid OTP or expired code.');
@@ -69,15 +88,16 @@ export default function OtpScreen() {
     <ImageBackground
       source={require('../../assets/images/signupsky.png')}
       style={styles.background}
-      resizeMode="cover"
-    >
+      resizeMode="cover">
       <LinearGradient
         colors={['transparent', 'rgba(0, 0, 0, 0.7)']}
         style={styles.shadowOverlay}
       />
 
       <View style={styles.overlayAdjusted}>
-        <Text style={styles.title} variant="headlineMedium">OTP Authentication</Text>
+        <Text style={styles.title} variant="headlineMedium">
+          OTP Authentication
+        </Text>
         <Text style={styles.subtitle} variant="bodyMedium">
           A 4-digit code has been sent to your {email ? 'email' : 'phone'}.
         </Text>
@@ -86,14 +106,14 @@ export default function OtpScreen() {
           {otp.map((digit, index) => (
             <TextInput
               key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
+              ref={el => (inputRefs.current[index] = el)}
               style={styles.otpInput}
               placeholderTextColor="gray"
               keyboardType="numeric"
               maxLength={1}
               value={digit}
-              onChangeText={(text) => handleOtpChange(text, index)}
-              onKeyPress={({ nativeEvent }) => {
+              onChangeText={text => handleOtpChange(text, index)}
+              onKeyPress={({nativeEvent}) => {
                 if (nativeEvent.key === 'Backspace') {
                   handleBackspace(digit, index);
                 }
@@ -103,7 +123,9 @@ export default function OtpScreen() {
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitText} variant="bodyLarge">Submit</Text>
+          <Text style={styles.submitText} variant="bodyLarge">
+            Submit
+          </Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
