@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1046876739493",
+    "project_id": "distenypin-c9e72",
+    "storage_bucket": "distenypin-c9e72.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046876739493:android:d9c5f38bb66e4721f23a4c",
+        "android_client_info": {
+          "package_name": "com.distenypin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHE6F7JzOdKSCj-G68Jdi_4E5vHAXaP9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

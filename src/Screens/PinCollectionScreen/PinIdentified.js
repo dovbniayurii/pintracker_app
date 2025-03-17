@@ -21,11 +21,15 @@ import * as Burnt from 'burnt';
 import LinearGradient from 'react-native-linear-gradient';
 import axiosClient from '../../../apiClient';
 
-export default function BoardDetails() {
+export default function PinIdentified() {
   const navigation = useNavigation();
   const route = useRoute();
-  const {itemId} = route.params;
   const [pin, setPin] = useState();
+  const {data} = route.params;
+  console.log(data);
+  useEffect(() => {
+    setPin(data);
+  }, []);
   const [modalVisible, setModalVisible] = useState(false);
 
   // Get dynamic window dimensions
@@ -42,18 +46,19 @@ export default function BoardDetails() {
     horizontal: width * 0.05, // 5% of screen width
     vertical: height * 0.02, // 2% of screen height
   };
-
   const handleRemovePin = async () => {
     setModalVisible(false);
+    // Perform the pin removal logic here
+    console.log(`Pin removed! ${pin.id}`);
     try {
       const response = await axiosClient.delete(
-        `/api/pins/pin-details/${itemId}/`,
+        `/api/pins/pin-details/${pin.id}/`,
       );
-      setPin(response.data);
+      //Alert.alert('Success', '');
       Burnt.toast({
-        title: 'Success',
+        title: 'Pin removed successfully!',
         preset: 'done',
-        message: 'Pin removed successfully!',
+        message: '',
       });
       navigation.navigate('MyBoards');
     } catch (error) {
@@ -61,17 +66,58 @@ export default function BoardDetails() {
     }
   };
 
-  useEffect(() => {
-    getPin();
-  }, []);
-
-  const getPin = async () => {
+  const handelAddToUserCollections = async () => {
     try {
-      const response = await axiosClient.get(
-        `/api/pins/pin-details/${itemId}/`,
+      const response = await axiosClient.post(
+        '/api/pins/user-collection/',
+        pin,
       );
-      setPin(response.data);
+      //Alert.alert('Success', '');
+      Burnt.toast({
+        title: 'Pin added to My Pin Board successfully!',
+        preset: 'done',
+      });
+      //navigation.navigate('MyBoards');
     } catch (error) {
+      Burnt.toast({
+        title: error.response?.data.error,
+        preset: 'done',
+      });
+    }
+  };
+  const handelAddToMyWishBoard = async () => {
+    try {
+      const response = await axiosClient.post('/api/pins/wishlist/', pin);
+
+      //Alert.alert('Success', '');
+      Burnt.toast({
+        title: 'Pin added to My Wish Board successfully!',
+        preset: 'done',
+      });
+      //navigation.navigate('MyBoards');
+    } catch (error) {
+      Burnt.toast({
+        title: error.response?.data.error,
+        preset: 'done',
+      });
+    }
+  };
+  const handelAddToMyTradingBoard = async () => {
+    try {
+      const response = await axiosClient.post('/api/pins/trading-board/', pin);
+      //Alert.alert('Success', '');
+      Burnt.toast({
+        title: 'Pin added to Trading Board successfully!',
+        preset: 'done',
+      });
+      // navigation.navigate('MyBoards');
+    } catch (error) {
+      console.log(error.response?.data.error);
+      Burnt.toast({
+        title: error.response?.data.error,
+        preset: 'done',
+      });
+
       console.error('Error fetching data:', error);
     }
   };
@@ -95,7 +141,7 @@ export default function BoardDetails() {
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.header}>
             <Text style={[styles.title, {fontSize: fontSize.title}]}>
-              Pin Details
+              Pin Identified
             </Text>
             {/* Trash Button */}
             <TouchableOpacity
@@ -174,7 +220,9 @@ export default function BoardDetails() {
                 Move Pin to
               </Text>
               <View style={styles.moveButtons}>
-                <TouchableOpacity style={styles.moveButton}>
+                <TouchableOpacity
+                  onPress={() => handelAddToUserCollections()}
+                  style={styles.moveButton}>
                   <Image
                     source={require('../../assets/images/mycollection.png')}
                     style={styles.moveIcon}
@@ -188,7 +236,9 @@ export default function BoardDetails() {
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.moveButton}>
+                <TouchableOpacity
+                  onPress={() => handelAddToMyWishBoard()}
+                  style={styles.moveButton}>
                   <Image
                     source={require('../../assets/images/love.png')}
                     style={styles.moveIcon}
@@ -202,7 +252,9 @@ export default function BoardDetails() {
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.moveButton}>
+                <TouchableOpacity
+                  onPress={() => handelAddToMyTradingBoard()}
+                  style={styles.moveButton}>
                   <Image
                     source={require('../../assets/images/Trading_Board.png')}
                     style={styles.moveIcon}

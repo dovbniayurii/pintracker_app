@@ -12,44 +12,40 @@ import {
 } from 'react-native';
 import {Icon, Text} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import axios from 'axios';
 import CountryPicker from 'react-native-country-picker-modal';
 import axiosPublic from '../../../axiosPublic';
-export default function ForgotPasswordScreen() {
+export default function VerifyPhoneNumber() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
+  const route = useRoute();
+  const {email} = route.params || {};
   const [phoneNumber, setPhoneNumber] = useState('');
   const [focusedInput, setFocusedInput] = useState(null);
   const [countryCode, setCountryCode] = useState('US');
   const [dialCode, setDialCode] = useState('+1');
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const handleSubmit = async () => {
-    if (!email && !phoneNumber) {
-      Alert.alert('Error', 'Please enter your email or phone number.');
+    if (!phoneNumber) {
+      Alert.alert('Error', 'Please enter your phone number.');
       return;
     }
 
     try {
       const requestBody = {};
-      if (email) {
-        requestBody.email = email;
-      }
       if (phoneNumber) {
         // Combine dial code with sanitized phone number
         const sanitizedPhone = phoneNumber.replace(/[^0-9]/g, '');
         requestBody.phone_number = `${dialCode}${sanitizedPhone}`;
       }
-
-      await axiosPublic.post(
-        '/api/users/forgot-password/',
-        requestBody,
-      );
+      // Ensure email is included in the request body
+      requestBody.email = email;
+      await axiosPublic.post('/api/users/verify-phone-number/', requestBody);
 
       navigation.navigate('OtpCode', {
-        type: 'resat_password',
+        type: 'number_verification',
         email,
-        phoneNumber: requestBody.phone_number || '',
+        phoneNumber: requestBody.phone_number,
       });
     } catch (err) {
       console.log('Error details:', err.response?.data);
@@ -91,40 +87,12 @@ export default function ForgotPasswordScreen() {
             {/* Title & Subtitle */}
             <View style={styles.headerMovedUp}>
               <Text style={styles.title} variant="headlineMedium">
-                Forgot Password?
+                Verify Your{'\n'}Phone Number
               </Text>
               <Text style={styles.subtitle} variant="bodyMedium">
-                Enter your email or phone number to recover your password.
+                Enter your phone number to receive a One-Time Password (OTP) for
+                verification
               </Text>
-            </View>
-
-            {/* Email Input */}
-            <View style={styles.inputWrapper}>
-              <Text style={styles.label} variant="bodyMedium">
-                Email Address
-              </Text>
-              <View
-                style={[
-                  styles.spacedInputContainer,
-                  {borderColor: focusedInput === 'email' ? '#3E55C6' : 'gray'},
-                ]}>
-                <Icon
-                  source="email-outline"
-                  size={20}
-                  color="grey"
-                  style={styles.icon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your email"
-                  placeholderTextColor="gray"
-                  keyboardType="email-address"
-                  value={email}
-                  onChangeText={setEmail}
-                  onFocus={() => setFocusedInput('email')}
-                  onBlur={() => setFocusedInput(null)}
-                />
-              </View>
             </View>
 
             {/* Phone Number Input */}

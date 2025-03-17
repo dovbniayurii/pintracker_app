@@ -9,45 +9,50 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
+  Dimensions,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import axiosClient from '../../../apiClient';
 
-// Import images statically
-const myCollectionIcon = require('../../assets/images/mycollection.png');
-const loveIcon = require('../../assets/images/love.png');
-const tradingBoardIcon = require('../../assets/images/Trading_Board.png');
+const {width} = Dimensions.get('window');
+const COLUMN_GAP = 12;
+const THUMBNAIL_SIZE = (width - 48 - COLUMN_GAP) / 2; // 48 for padding, 12 for gap
 
-const GameGrid = ({title, items, icons}) => (
-  <View style={styles.section}>
+const BoardSection = ({title, icon, items, onPress}) => (
+  <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
     <View style={styles.sectionHeader}>
-      <Image source={icons} style={{width: 20, height: 20}} />
+      <Image source={icon} style={styles.sectionIcon} />
       <Text style={styles.sectionTitle}>{title}</Text>
     </View>
-    <View style={styles.grid}>
-      {items.map((item, index) => (
-        <TouchableOpacity key={index} style={styles.gridItem}>
-          <View style={styles.gameIcon}>
-            {/* Placeholder for game icons */}
-            <View style={styles.placeholderIcon}>
-              {item.pin.image_url && (
-                <Image
-                  source={{uri: item.pin.image_url}}
-                  style={{width: 200, height: 200}} // Ensure width & height are set
-                  resizeMode="cover"
-                />
-              )}
+    <View style={styles.boardRow}>
+      {items && items.length > 0 ? (
+        items.slice(0, 2).map(
+          (
+            item,
+            index, // Removed extra {}
+          ) => (
+            <View key={index} style={styles.boardItem}>
+              <Image
+                source={{uri: item.pin.image_url}}
+                style={styles.boardImage}
+                resizeMode="cover"
+              />
             </View>
-          </View>
-        </TouchableOpacity>
-      ))}
+          ),
+        )
+      ) : (
+        <View style={styles.emptyGrid}>
+          <Text style={styles.emptyText}>No items</Text>
+        </View>
+      )}
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
 export default function Boards() {
   const navigation = useNavigation();
-  const dummyItems = Array(4).fill({});
   const [myboard, setMyboard] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [trading, setTrading] = useState([]);
@@ -57,108 +62,115 @@ export default function Boards() {
     myWishList();
     Trading();
   }, []);
+
   const myBoardData = async () => {
     try {
       const response = await axiosClient.get('/api/pins/user-collection/');
-      //console.log(response.data);
-      setMyboard(response.data);
+      setMyboard(response.data.slice(0, 2));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
   const myWishList = async () => {
     try {
       const response = await axiosClient.get('/api/pins/wishlist/');
-      //console.log(response.data);
-      setWishlist(response.data);
+      setWishlist(response.data.slice(0, 2));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
   const Trading = async () => {
     try {
       const response = await axiosClient.get('/api/pins/trading-board/');
-      //console.log(response.data);
-      setTrading(response.data);
+      setTrading(response.data.slice(0, 2));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
   return (
-    <ImageBackground
-      source={require('../../assets/images/realsky.png')}
-      style={styles.background}>
-      <LinearGradient
-        colors={['#000000', 'rgba(0, 28, 92, 0)']}
-        style={styles.topGradient}
-      />
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <ImageBackground
+        source={require('../../assets/images/realsky.png')}
+        style={styles.background}>
+        <LinearGradient
+          colors={['#000000', 'rgba(0, 28, 92, 0)']}
+          style={styles.topGradient}
+        />
         <SafeAreaView style={styles.safeArea}>
-          <Text style={styles.title}>My Collection</Text>
+          <Text style={styles.title}>My Boards</Text>
 
-          <ScrollView style={styles.scrollView}>
-            <TouchableOpacity onPress={() => navigation.navigate('MyBoards')}>
-              <GameGrid
-                title="My Board"
-                items={myboard}
-                icons={myCollectionIcon}
-              />
-            </TouchableOpacity>
+          <ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}>
+            <BoardSection
+              title="My Pin Board"
+              icon={require('../../assets/images/mycollection.png')}
+              items={myboard}
+              onPress={() => navigation.navigate('MyBoards')}
+            />
 
-            <GameGrid title="My Wishlist" items={wishlist} icons={loveIcon} />
-            <GameGrid
-              title="Trading Board"
+            <BoardSection
+              title="My Wish Board"
+              icon={require('../../assets/images/love.png')}
+              items={wishlist}
+             // onPress={() => {}}
+            />
+
+            <BoardSection
+              title="My Trading Board"
+              icon={require('../../assets/images/Trading_Board.png')}
               items={trading}
-              icons={tradingBoardIcon}
+             // onPress={() => {}}
             />
           </ScrollView>
+
+          <LinearGradient
+            colors={['rgba(0, 28, 92, 0)', '#000000']}
+            style={styles.bottomGradient}
+          />
+
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={styles.footerButton}
+              onPress={() => navigation.navigate('Scanning')}>
+              <Image
+                source={require('../../assets/images/scanner.png')}
+                style={styles.footerIcon}
+              />
+              <Text style={styles.footerText}>Scan</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.footerButton, styles.activeFooterButton]}
+              onPress={() => navigation.navigate('Boards')}>
+              <Image
+                source={require('../../assets/images/mycollection.png')}
+                style={[styles.footerIcon, styles.activeIcon]}
+              />
+              <Text style={[styles.footerText, styles.activeText]}>
+                My Boards
+              </Text>
+            </TouchableOpacity>
+          </View>
         </SafeAreaView>
-      </View>
-
-      <LinearGradient
-        colors={['rgba(0, 28, 92, 0)', '#000000']}
-        style={styles.bottomGradient}
-      />
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
-          <Image
-            source={require('../../assets/images/scanner.png')}
-            style={styles.footerIcon}
-          />
-          <Text style={styles.footerText}>Scan</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.footerButton}
-          onPress={() => navigation.navigate('Boards')}>
-          <Image
-            source={require('../../assets/images/mycollection.png')}
-            style={styles.footerIcon}
-          />
-          <Text style={[styles.footerText, {color: 'grey'}]}>
-            My Collection
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   container: {
     flex: 1,
-    marginTop: '30%',
+    backgroundColor: '#000',
   },
-  backgroundImage: {
+  background: {
     flex: 1,
-    resizeMode: 'cover',
+    backgroundColor: '#001C5C',
   },
   topGradient: {
     position: 'absolute',
@@ -176,9 +188,10 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
@@ -186,98 +199,96 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    paddingHorizontal: 16,
   },
-  section: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    marginBottom: 20,
-    borderRadius: 12,
-    padding: 12,
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 20,
+    gap: 24,
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
   },
+  sectionIcon: {
+    width: 20,
+    height: 20,
+    tintColor: '#fff',
+  },
   sectionTitle: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+    textDecorationLine: 'underline',
   },
-  grid: {
+  boardRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    //backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    gap: COLUMN_GAP,
   },
-  gridItem: {
-    width: '23%',
-    aspectRatio: 1,
-    marginBottom: 8,
-  },
-  gameIcon: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 8,
+  boardItem: {
+    width: THUMBNAIL_SIZE,
+    height: THUMBNAIL_SIZE,
+    borderRadius: 16,
     overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 1,
+    padding: 5,
+    shadowColor: '#fff',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  placeholderIcon: {
+  boardImage: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 8,
+    borderRadius: 16,
   },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  navItem: {
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  activeNavItem: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 8,
-  },
-  navText: {
-    color: '#fff',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  activeNavText: {
-    color: '#3B82F6',
-  },
-
   footer: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 16,
+    paddingBottom: Platform.OS === 'ios' ? 30 : 16,
     backgroundColor: 'transparent',
   },
   footerButton: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    opacity: 0.7,
   },
   footerIcon: {
     width: 24,
     height: 24,
     tintColor: '#fff',
-    marginRight: 8,
+    marginBottom: 4,
   },
   footerText: {
-    color: 'white',
-    fontSize: 21,
+    color: '#fff',
+    fontSize: 12,
+  },
+  activeFooterButton: {
+    opacity: 1,
+  },
+  activeIcon: {
+    tintColor: '#fff',
+  },
+  activeText: {
+    color: '#fff',
     fontWeight: '500',
+  },
+  emptyGrid: {
+    width: '100%',
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 14,
   },
 });

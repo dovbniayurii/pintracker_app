@@ -17,6 +17,9 @@ import {
 import {Icon} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
+import CountryPicker from 'react-native-country-picker-modal';
+import axios from 'axios';
+import axiosPublic from '../../../axiosPublic';
 
 export default function SignupScreen() {
   const navigation = useNavigation();
@@ -27,7 +30,6 @@ export default function SignupScreen() {
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
   const [focusedInput, setFocusedInput] = useState(null);
-
   const handleSubmit = async () => {
     console.log(email, password, confirmPassword);
 
@@ -43,40 +45,40 @@ export default function SignupScreen() {
     }
 
     try {
+      // Combine dial code with sanitized phone number
       // Make a POST request to your Django signup endpoint
-      const response = await fetch('http://10.0.2.2:8000/api/users/signup/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          useremail: email,
-          password: password,
-          confirm_password: confirmPassword,
-          phone_number: '00880009',
-        }),
+      const response = await axiosPublic.post('/api/users/signup/', {
+        useremail: email,
+        password: password,
+        confirm_password: confirmPassword,
       });
-
-      if (!response.ok) {
-        // If the response has an error status, extract and display the error
-        const errorData = await response.json();
-        console.log(errorData);
-
-        Alert.alert('Sign Up Error', errorData.detail || 'An error occurred.');
-        return;
-      }
-
-      // If the sign-up is successful, parse the response if needed
-      const data = await response.json();
 
       // Optionally, display a success message
       Alert.alert('Success', 'Your account has been created successfully!');
 
       // Navigate to the login screen (or wherever you want)
-      navigation.navigate('LoginScreen');
+      navigation.navigate('VerifyPhoneNumber',{email:email});
     } catch (error) {
-      // Catch network or other unexpected errors
-      Alert.alert('Sign Up Error', error.message);
+      console.error(error.response); // Log the error response for debugging
+
+      let errorMessage = 'An error occurred. Please try again.';
+
+      // Check if error.response exists
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
+
+        // If errors exist, extract the messages
+        if (errors) {
+          // Flatten error messages
+          errorMessage = Object.values(errors).flat().join('\n');
+        }
+      } else {
+        // Handle network or unexpected error
+        errorMessage = 'Network error or server not reachable.';
+      }
+
+      // Display error message in alert
+      Alert.alert('Sign Up Error', errorMessage);
     }
   };
 
@@ -357,5 +359,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 5,
+  },
+  spacedInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#221F25',
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    width: '100%',
+    height: 45,
+    borderWidth: 1,
+    borderColor: 'gray',
+  },
+  countryPickerButton: {
+    paddingRight: 10,
+    paddingLeft: 5,
+    height: 40,
+    justifyContent: 'center',
+    borderRightWidth: 1,
+    borderRightColor: 'gray', // Changed to match input border
+    marginRight: 10,
   },
 });

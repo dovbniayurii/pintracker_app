@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Camera, useCameraDevice} from 'react-native-vision-camera';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import axiosClient from '../../../apiClient';
 import RNFS from 'react-native-fs'; // React Native File System
@@ -21,6 +21,7 @@ const DisneyPinScanner = () => {
   const [hasPermission, setHasPermission] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isScanning, setIsScanning] = useState(true);
+  const navigation = useNavigation();
   const device = useCameraDevice('back');
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
@@ -64,42 +65,32 @@ const DisneyPinScanner = () => {
     }
   };
 
-  // Helper function to convert base64 string to Blob using react-native-base64
-  const base64ToBlob = (base64String, mimeType) => {
-    const byteCharacters = base64.decode(base64String); // Decode base64 using react-native-base64
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-      const slice = byteCharacters.slice(offset, offset + 1024);
-      byteArrays.push(
-        new Uint8Array(slice.split('').map(char => char.charCodeAt(0))),
-      );
-    }
-
-    return new Blob(byteArrays, {type: mimeType});
-  };
-
-  const uploadImage = async (imageUri) => {
+  const uploadImage = async imageUri => {
     try {
       // Determine MIME type based on file extension or default to JPEG
       const fileExtension = imageUri.split('.').pop().toLowerCase();
       const mimeType = `image/${fileExtension === 'png' ? 'png' : 'jpeg'}`;
-      
-      const base64Image = `data:${mimeType};base64,${await RNFS.readFile(imageUri, 'base64')}`;
-      
+
+      const base64Image = `data:${mimeType};base64,${await RNFS.readFile(
+        imageUri,
+        'base64',
+      )}`;
+
       const response = await axiosClient.post(
         '/api/pins/create-pin/',
-        { image: base64Image },
-        { headers: { 'Content-Type': 'application/json' } }
+        {image: base64Image},
+        {headers: {'Content-Type': 'application/json'}},
       );
       console.log('Upload successful:', response.data);
+      navigation.navigate('PinIdentified', {data: response.data});
     } catch (error) {
       // Enhanced error logging
-      console.error('Upload error:', error.response?.data?.error || error.message);
+      console.error(
+        'Upload error:',
+        error.response?.data?.error || error.message,
+      );
     }
   };
-  
-  
 
   if (!isInitialized || !device || !hasPermission) {
     return (
