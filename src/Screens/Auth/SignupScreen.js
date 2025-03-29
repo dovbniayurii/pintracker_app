@@ -17,7 +17,6 @@ import {
 import {Icon} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
-import CountryPicker from 'react-native-country-picker-modal';
 import axios from 'axios';
 import axiosPublic from '../../../axiosPublic';
 
@@ -57,7 +56,7 @@ export default function SignupScreen() {
       Alert.alert('Success', 'Your account has been created successfully!');
 
       // Navigate to the login screen (or wherever you want)
-      navigation.navigate('VerifyPhoneNumber',{email:email});
+      navigation.navigate('VerifyPhoneNumber', {email: email});
     } catch (error) {
       console.error(error.response); // Log the error response for debugging
 
