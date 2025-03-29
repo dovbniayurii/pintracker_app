@@ -10,7 +10,7 @@ import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosPublic from './axiosPublic';
 
-export default function MainApp() {
+export default function MainApp({ someProp = 'defaultValue' }) {
   async function requestPermission() {
     const authStatus = await messaging().requestPermission();
     if (

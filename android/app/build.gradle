@@ -83,7 +83,7 @@ android {
         applicationId "com.distenypin"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 100000
         versionName "1.0"
     }
     signingConfigs {
