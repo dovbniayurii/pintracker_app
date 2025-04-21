@@ -4,7 +4,7 @@ import {resetNavigation} from './src/Navigation/NavigationService';
 import {Alert} from 'react-native';
 
 // Your base API URL
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = 'http://108.181.199.70:7000';
 
 // Create axios client
 const axiosClient = axios.create({
