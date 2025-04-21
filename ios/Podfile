@@ -7,7 +7,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :macos, '10.15' # Target macOS instead of iOS
+platform :macos, '13.0' # Target macOS instead of iOS
 prepare_react_native_project!
 
 linkage = ENV['USE_FRAMEWORKS']
