@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "DistenyPin.app"
-               BlueprintName = "DistenyPin"
-               ReferencedContainer = "container:DistenyPin.xcodeproj">
+               BuildableName = "PinTracker.app"
+               BlueprintName = "PinTracker"
+               ReferencedContainer = "container:PinTracker.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "DistenyPinTests.xctest"
-               BlueprintName = "DistenyPinTests"
-               ReferencedContainer = "container:DistenyPin.xcodeproj">
+               BuildableName = "PinTrackerTests.xctest"
+               BlueprintName = "PinTrackerTests"
+               ReferencedContainer = "container:PinTracker.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "DistenyPin.app"
-            BlueprintName = "DistenyPin"
-            ReferencedContainer = "container:DistenyPin.xcodeproj">
+            BuildableName = "PinTracker.app"
+            BlueprintName = "PinTracker"
+            ReferencedContainer = "container:PinTracker.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "DistenyPin.app"
-            BlueprintName = "DistenyPin"
-            ReferencedContainer = "container:DistenyPin.xcodeproj">
+            BuildableName = "PinTracker.app"
+            BlueprintName = "PinTracker"
+            ReferencedContainer = "container:PinTracker.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
