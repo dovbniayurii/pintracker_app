@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface DistenyPinTests : XCTestCase
+@interface PinTrackerTests : XCTestCase
 
 @end
 
-@implementation DistenyPinTests
+@implementation PinTrackerTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
 {
